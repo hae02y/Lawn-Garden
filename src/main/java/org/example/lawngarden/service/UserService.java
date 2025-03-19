@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -35,6 +37,11 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
         userRepository.save(user);
+    }
+
+    // ✅ 모든 유저 목록 가져오기
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }
 

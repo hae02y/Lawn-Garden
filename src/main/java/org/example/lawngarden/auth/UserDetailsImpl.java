@@ -30,6 +30,10 @@ public class UserDetailsImpl implements UserDetails {
         return user.getUsername();
     }
 
+    public String getRoleName() {
+        return user.getRole().getDisplayName(); // ✅ Enum에서 한글 이름 반환
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

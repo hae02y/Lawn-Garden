@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/posts")
@@ -37,16 +39,34 @@ public class PostController {
 
     @PostMapping
     public String createPost(@ModelAttribute Post post,
-                             @RequestParam("image") MultipartFile image,
-                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        post.setUser(userDetails.getUser());
-        postService.createPost(post, image);
-        return "redirect:/posts";
+                             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                             @AuthenticationPrincipal UserDetailsImpl userDetails,
+                             Model model) {
+        try {
+            post.setUser(userDetails.getUser());
+
+            // ✅ 파일이 존재하면 byte[]로 변환 후 저장
+            if (imageFile != null && !imageFile.isEmpty()) {
+                post.setImage(imageFile.getBytes());
+            }
+
+            postService.createPost(post);
+            return "redirect:/posts";
+        } catch (IOException e) {
+            model.addAttribute("error", "파일 업로드 중 오류가 발생했습니다.");
+            return "post_form";
+        }
     }
 
     @GetMapping("/{id}")
     public String viewPost(@PathVariable Long id, Model model) {
-        model.addAttribute("post", postService.getPostById(id));
+        Post post = postService.getPostById(id);
+        if (post.getImage() != null) {
+            String base64Image = Base64.getEncoder().encodeToString(post.getImage());
+            String dataUri = "data:image/png;base64," + base64Image;
+            model.addAttribute("dataUri", dataUri);
+        }
+        model.addAttribute("post", post);
         return "post_detail";
     }
 
@@ -56,5 +76,13 @@ public class PostController {
         List<User> penaltyUsers = postService.getPenaltyUsers();
         model.addAttribute("penaltyUsers", penaltyUsers);
         return "penalty_list"; // ✅ penalty_list.html로 연결
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/weekly-submissions")
+    public String showWeeklySubmissions(Model model) {
+        Map<User, Long> submissionData = postService.getWeeklySubmissions();
+        model.addAttribute("submissionData", submissionData);
+        return "weekly_submissions";
     }
 }

@@ -2,6 +2,8 @@ package org.example.lawngarden.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 
 @Entity
@@ -15,14 +17,8 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
-
     @Column(nullable = true)
-    private String imagePath; // 이미지 저장 경로
+    private String link;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,4 +26,11 @@ public class Post {
 
     @Column(nullable = false)
     private LocalDate createdDate; // 작성 날짜
+
+    @Lob  // ✅ 이미지 데이터를 BLOB 타입으로 저장
+    @Column(columnDefinition = "LONGBLOB")  // MySQL에서 큰 바이너리 데이터를 저장하는 타입
+    private byte[] image;
+
+    @Transient
+    private transient MultipartFile imageFile; // ✅ Spring에서 바인딩되지 않도록 처리
 }

@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByCreatedDate(LocalDate date);
+    List<Post> findByCreatedDateBetween(LocalDate start, LocalDate end);
+
 }
 
