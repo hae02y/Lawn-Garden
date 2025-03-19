@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>홈</title>
+</head>
+<body>
+<h2>환영합니다, <span th:text="${username}"></span> 님!</h2>
+<p>당신의 권한: <span th:text="${role}"></span></p>
+<form th:action="@{/logout}" method="post">
+    <button type="submit">로그아웃</button>
+
+    <a href="/posts">
+        <button type="button">글 보러 가기</button>
+    </a>
+
+    <a href="/posts/penalties">
+        <button type="button">벌칙 대상자 확인</button>
+    </a>
+</form>
+</body>
+</html>

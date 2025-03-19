@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>벌칙 대상자</title>
+</head>
+<body>
+<h2>벌칙 대상자 목록</h2>
+<ul>
+    <li th:each="user : ${penaltyUsers}">
+        <span th:text="${user.username}"></span> (오늘 인증하지 않았습니다!)
+    </li>
+</ul>
+</body>
+</html>

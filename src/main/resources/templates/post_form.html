@@ -1,0 +1,6 @@
+<form th:action="@{/posts}" method="post" enctype="multipart/form-data" th:object="${post}">
+    <input type="text" th:field="*{title}" placeholder="제목" required>
+    <textarea th:field="*{content}" placeholder="내용" required></textarea>
+    <input type="file" name="image">
+    <button type="submit">등록</button>
+</form>
